@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
 import { BM25Index } from "@/lib/bm25";
 import { chunkText } from "@/lib/chunk";
-import { streamAnswer } from "@/lib/anthropic";
-import type { ChatMessage, Chunk, Citation } from "@/lib/types";
+import { streamAnswer } from "@/lib/answer";
+import type { Chunk, Citation } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -26,7 +26,7 @@ interface InputDoc {
  * then the streamed answer text.
  */
 export async function POST(req: NextRequest) {
-  let body: { question?: string; history?: ChatMessage[]; docs?: InputDoc[] };
+  let body: { question?: string; docs?: InputDoc[] };
   try {
     body = await req.json();
   } catch {
@@ -65,15 +65,13 @@ export async function POST(req: NextRequest) {
     snippet: p.chunk.text.slice(0, 200),
   }));
 
-  const history = (body.history ?? []).slice(-6); // keep recent turns only
-
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       // Header line with citations, then \f, then the streamed answer.
       controller.enqueue(encoder.encode(JSON.stringify({ citations }) + "\f"));
       try {
-        for await (const delta of streamAnswer(question, passages, history)) {
+        for await (const delta of streamAnswer(passages)) {
           controller.enqueue(encoder.encode(delta));
         }
       } catch (err) {

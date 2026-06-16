@@ -8,7 +8,7 @@ const mono = JetBrains_Mono({ variable: "--font-mono", subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "DocChat AI — chat with your documents",
   description:
-    "A self-contained RAG app: upload documents, ask questions, get cited answers from Claude. Local BM25 retrieval, streaming responses.",
+    "A self-contained RAG app: add documents or import a URL, ask questions, get cited passages. 100% local BM25 retrieval, streaming responses, no external services.",
 };
 
 export default function RootLayout({

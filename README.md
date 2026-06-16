@@ -1,8 +1,8 @@
-# DocChat AI 🔎🤖
+# DocChat AI 🔎
 
-Chat with your documents. Paste text **or import any web page by URL**, ask questions in natural language, and get **answers grounded in your sources with inline citations** — powered by a from-scratch RAG (Retrieval-Augmented Generation) pipeline.
+Chat with your documents. Paste text **or import any web page by URL**, ask questions in natural language, and get **the most relevant passages from your sources, with inline citations** — powered by a from-scratch RAG (Retrieval-Augmented Generation) pipeline.
 
-Retrieval runs **100% locally** (BM25, no embedding service or vector database), so the whole app is self-contained. Answer generation uses the [Claude API](https://www.anthropic.com/api) and streams token-by-token. No API key? The app still runs in **demo mode**, showing the retrieved passages.
+Retrieval runs **100% locally** (BM25, no embedding service, no vector database, no external API). The whole app is self-contained and needs no API keys to run.
 
 > Built with Next.js 15 (App Router), React 19, TypeScript and Tailwind CSS v4.
 
@@ -10,13 +10,13 @@ Retrieval runs **100% locally** (BM25, no embedding service or vector database),
 
 ## ✨ Features
 
-- **Retrieval-Augmented Generation** — documents are chunked, indexed, and the most relevant passages are retrieved per question and fed to the model as grounded context.
 - **From-scratch BM25 search** — the classic IR ranking function (term frequency × inverse document frequency with length normalization), implemented with zero dependencies. Bilingual (PT/EN) tokenizer with accent folding and stopword removal.
-- **Cited answers** — every claim references the passages it came from, shown as source chips you can hover to preview.
-- **Streaming responses** — answers render live as Claude generates them, using a `ReadableStream` over the Node boundary.
+- **Retrieval-Augmented Generation** — documents are chunked, indexed, and the most relevant passages are retrieved per question and returned as grounded, cited context.
+- **Cited results** — every passage references the document it came from, shown as source chips you can hover to preview.
 - **Import by URL** — paste a link and the server fetches the page, strips it to readable text, and indexes it (no CORS headaches, done server-side).
-- **Graceful degradation** — works with or without an `ANTHROPIC_API_KEY`.
+- **Streaming responses** — results render live, using a `ReadableStream` over the Node boundary.
 - **Stateless & serverless-ready** — documents live in the browser (`localStorage`) and are sent with each question, so the API holds no state and runs reliably on serverless platforms with no database to provision.
+- **No external services** — no API keys, no third-party AI provider, no vector DB. It just works offline.
 - **Polished dark UI** — responsive, accessible, keyboard-friendly (Enter to send, Shift+Enter for newline).
 
 ## 🏗️ Architecture
@@ -34,11 +34,11 @@ Retrieval runs **100% locally** (BM25, no embedding service or vector database),
           │ /api/chat (stateless)│ ───────────────────▶ │  BM25Index   │
           │  1. chunk docs       │                       │ (lib/bm25)   │
           │  2. search passages  │                       └──────────────┘
-          │  3. stream answer    │  context + question
-          └──────────┬──────────┘ ─────────────────────▶  Claude API
-                     │                                     (claude-opus-4-8)
-                     ▼  text stream (citations header + tokens)
-                 Browser renders cited answer live
+          │  3. stream cited      │
+          │     passages          │
+          └──────────┬──────────┘
+                     ▼  text stream (citations header + passages)
+                 Browser renders the cited result live
 ```
 
 **Key modules**
@@ -47,9 +47,9 @@ Retrieval runs **100% locally** (BM25, no embedding service or vector database),
 |------|----------------|
 | `src/lib/chunk.ts`        | Split documents into overlapping, boundary-aware chunks |
 | `src/lib/bm25.ts`         | Dependency-free BM25 ranking index + tokenizer |
-| `src/lib/anthropic.ts`    | Prompt construction + streaming Claude calls (with demo fallback) |
+| `src/lib/answer.ts`       | Compose a cited result from the retrieved passages (local, streamed) |
 | `src/app/api/extract`     | Fetch a URL server-side and return readable text |
-| `src/app/api/chat`        | Stateless retrieval + streamed, cited answer |
+| `src/app/api/chat`        | Stateless retrieval + streamed, cited result |
 | `src/app/page.tsx`        | Chat UI, document sidebar (localStorage), streaming client |
 
 ## 🚀 Getting started
@@ -58,15 +58,11 @@ Retrieval runs **100% locally** (BM25, no embedding service or vector database),
 # 1. Install dependencies
 npm install
 
-# 2. (optional) add your Claude API key for real answers
-cp .env.example .env.local
-#   then edit .env.local and set ANTHROPIC_API_KEY=...
-
-# 3. Run the dev server
+# 2. Run the dev server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000), click **Exemplo** in the sidebar to load a sample document, and ask a question.
+Open [http://localhost:3000](http://localhost:3000), click **Exemplo** in the sidebar (or import a URL), and ask a question. No configuration or API key needed.
 
 ## 🧪 Tests
 
@@ -81,19 +77,19 @@ Unit tests cover the retrieval core — chunking boundaries and BM25 ranking —
 - **Framework:** Next.js 15 (App Router, Route Handlers, streaming)
 - **Language:** TypeScript (strict)
 - **UI:** React 19, Tailwind CSS v4
-- **AI:** Anthropic Claude (`@anthropic-ai/sdk`), model `claude-opus-4-8`
-- **Retrieval:** custom BM25 — no external vector DB
+- **Retrieval:** custom BM25 — no external vector DB, no AI provider
 
 ## 📦 Deploy
 
-Deploys cleanly to [Vercel](https://vercel.com/) with **zero configuration** — the API is stateless (documents live in the browser), so there's no database to provision. Set `ANTHROPIC_API_KEY` as an environment variable for real Claude answers; without it the live demo runs in demo mode (retrieval only).
+Deploys cleanly to [Vercel](https://vercel.com/) with **zero configuration** — the API is stateless (documents live in the browser), so there's no database to provision and no environment variables to set.
 
 ## 📝 Notes & possible extensions
 
-- Swap BM25 for vector embeddings (e.g. Voyage AI) + a hybrid reranker.
+- Add an optional answer-synthesis layer on top of retrieval (any LLM provider) behind a feature flag.
+- Swap BM25 for vector embeddings + a hybrid reranker.
 - Add PDF/DOCX parsing on upload.
 - Per-user document spaces with auth + a shared datastore.
 
 ---
 
-Made as a portfolio project to demonstrate full-stack engineering and applied AI. Retrieval, prompting, streaming, and UI are all hand-built.
+Made as a portfolio project to demonstrate full-stack engineering and applied information retrieval. Chunking, BM25 ranking, URL ingestion, streaming, and UI are all hand-built.

@@ -26,7 +26,7 @@ interface Msg {
 const STORAGE_KEY = "docchat-docs-v1";
 
 const SAMPLE = {
-  title: "Política de Férias — Atol Incorporadora",
+  title: "Política de Férias (Exemplo)",
   content: `POLÍTICA DE FÉRIAS
 
 Todo colaborador com 12 meses completos de trabalho tem direito a 30 dias corridos de férias.
@@ -249,7 +249,7 @@ export default function Home() {
             <span className="text-accent">◆</span> DocChat AI
           </h1>
           <p className="mt-1 text-xs text-muted">
-            RAG sobre seus documentos · busca BM25 local + Claude
+            RAG sobre seus documentos · busca BM25 100% local
           </p>
         </div>
 
