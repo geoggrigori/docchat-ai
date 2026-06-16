@@ -1,19 +1,32 @@
 import { NextRequest } from "next/server";
-import { store } from "@/lib/store";
+import { BM25Index } from "@/lib/bm25";
+import { chunkText } from "@/lib/chunk";
 import { streamAnswer } from "@/lib/anthropic";
-import type { ChatMessage, Citation } from "@/lib/types";
+import type { ChatMessage, Chunk, Citation } from "@/lib/types";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
+
+interface InputDoc {
+  id?: string;
+  title?: string;
+  content?: string;
+}
 
 /**
- * POST /api/chat — answer a question over the indexed documents.
+ * POST /api/chat — answer a question over the documents sent in the request.
  *
- * Pipeline: retrieve top-k chunks (BM25) -> stream a cited answer from Claude.
- * The response is a text stream; the first line is a JSON header carrying the
- * citations, followed by a form-feed (\f) separator, then the streamed answer.
+ * The client owns the documents (kept in the browser), so the API is fully
+ * stateless: every request rebuilds a BM25 index from the provided docs,
+ * retrieves the top-k chunks, then streams a cited answer. Being stateless is
+ * what lets this run reliably on serverless platforms (e.g. Vercel), where no
+ * shared filesystem or memory survives between requests.
+ *
+ * Stream format: a JSON header with citations, a form-feed (\f) separator,
+ * then the streamed answer text.
  */
 export async function POST(req: NextRequest) {
-  let body: { question?: string; history?: ChatMessage[] };
+  let body: { question?: string; history?: ChatMessage[]; docs?: InputDoc[] };
   try {
     body = await req.json();
   } catch {
@@ -25,15 +38,26 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "Question is required" }, { status: 400 });
   }
 
-  await store.init();
-  if (store.size === 0) {
+  const docs = (body.docs ?? []).filter((d) => (d.content ?? "").trim());
+  if (docs.length === 0) {
     return Response.json(
-      { error: "No documents yet — upload something first." },
+      { error: "No documents yet — add one first." },
       { status: 400 },
     );
   }
 
-  const passages = await store.search(question, 4);
+  const chunks: Chunk[] = docs.flatMap((d, i) =>
+    chunkText(
+      (d.content ?? "").slice(0, 200_000),
+      d.id ?? `doc-${i}`,
+      (d.title ?? "").trim() || "Untitled",
+    ),
+  );
+
+  const index = new BM25Index();
+  index.build(chunks);
+  const passages = index.search(question, 4);
+
   const citations: Citation[] = passages.map((p) => ({
     docId: p.chunk.docId,
     docTitle: p.chunk.docTitle,

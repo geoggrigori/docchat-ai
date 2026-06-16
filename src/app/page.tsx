@@ -1,13 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { chunkText } from "@/lib/chunk";
 
-interface DocMeta {
+interface Doc {
   id: string;
   title: string;
-  chunks: number;
-  chars: number;
-  createdAt: number;
+  content: string;
 }
 
 interface Citation {
@@ -23,6 +22,8 @@ interface Msg {
   citations?: Citation[];
   streaming?: boolean;
 }
+
+const STORAGE_KEY = "docchat-docs-v1";
 
 const SAMPLE = {
   title: "Política de Férias — Atol Incorporadora",
@@ -41,46 +42,90 @@ Colaboradores em período de experiência (primeiros 90 dias) não têm direito 
 O pagamento das férias, acrescido do terço constitucional, é feito até 2 dias antes do início do período de descanso.`,
 };
 
+function newId(): string {
+  try {
+    return crypto.randomUUID();
+  } catch {
+    return Math.random().toString(36).slice(2) + Date.now().toString(36);
+  }
+}
+
 export default function Home() {
-  const [docs, setDocs] = useState<DocMeta[]>([]);
+  const [docs, setDocs] = useState<Doc[]>([]);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+
   const [showAdd, setShowAdd] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
+  const [url, setUrl] = useState("");
+  const [urlBusy, setUrlBusy] = useState(false);
+  const [addError, setAddError] = useState("");
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const loadDocs = useCallback(async () => {
-    const res = await fetch("/api/documents");
-    const data = await res.json();
-    setDocs(data.docs ?? []);
+  // Documents live in the browser, so the API can stay stateless.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) setDocs(JSON.parse(raw));
+    } catch {
+      /* ignore corrupt storage */
+    }
   }, []);
 
-  useEffect(() => {
-    loadDocs();
-  }, [loadDocs]);
+  const persist = useCallback((next: Doc[]) => {
+    setDocs(next);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      /* storage full / unavailable — keep in memory */
+    }
+  }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [messages]);
 
-  async function addDoc(title: string, content: string) {
+  function addDoc(title: string, content: string) {
     if (!content.trim()) return;
-    await fetch("/api/documents", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, content }),
-    });
+    const doc: Doc = {
+      id: newId(),
+      title: title.trim() || "Sem título",
+      content,
+    };
+    persist([doc, ...docs]);
     setNewTitle("");
     setNewContent("");
+    setAddError("");
     setShowAdd(false);
-    loadDocs();
   }
 
-  async function deleteDoc(id: string) {
-    await fetch(`/api/documents?id=${id}`, { method: "DELETE" });
-    loadDocs();
+  async function addFromUrl() {
+    const target = url.trim();
+    if (!target || urlBusy) return;
+    setUrlBusy(true);
+    setAddError("");
+    try {
+      const res = await fetch("/api/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: target }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Falha ao importar a URL.");
+      addDoc(data.title, data.content);
+      setUrl("");
+    } catch (e) {
+      setAddError(e instanceof Error ? e.message : "Falha ao importar a URL.");
+    } finally {
+      setUrlBusy(false);
+    }
+  }
+
+  function deleteDoc(id: string) {
+    persist(docs.filter((d) => d.id !== id));
   }
 
   async function send() {
@@ -92,7 +137,7 @@ export default function Home() {
         {
           role: "assistant",
           content:
-            "Adicione ao menos um documento antes de perguntar. Clique em **+ Documento** ou em **Exemplo**.",
+            "Adicione ao menos um documento antes de perguntar. Clique em **+ Documento**, importe uma **URL** ou carregue o **Exemplo**.",
         },
       ]);
       return;
@@ -114,7 +159,15 @@ export default function Home() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, history }),
+        body: JSON.stringify({
+          question,
+          history,
+          docs: docs.map((d) => ({
+            id: d.id,
+            title: d.title,
+            content: d.content,
+          })),
+        }),
       });
 
       if (!res.ok || !res.body) {
@@ -202,7 +255,10 @@ export default function Home() {
 
         <div className="flex gap-2 p-3">
           <button
-            onClick={() => setShowAdd((s) => !s)}
+            onClick={() => {
+              setShowAdd((s) => !s);
+              setAddError("");
+            }}
             className="flex-1 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-white transition hover:opacity-90"
           >
             + Documento
@@ -218,6 +274,40 @@ export default function Home() {
 
         {showAdd && (
           <div className="border-b border-border px-3 pb-3">
+            {/* Import from URL */}
+            <div className="mb-3">
+              <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-muted">
+                Importar de uma URL
+              </label>
+              <div className="flex gap-2">
+                <input
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addFromUrl();
+                    }
+                  }}
+                  placeholder="https://exemplo.com/artigo"
+                  className="min-w-0 flex-1 rounded-lg border border-border bg-panel-2 px-3 py-2 text-sm outline-none focus:border-accent"
+                />
+                <button
+                  onClick={addFromUrl}
+                  disabled={!url.trim() || urlBusy}
+                  className="shrink-0 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-40"
+                >
+                  {urlBusy ? "…" : "Importar"}
+                </button>
+              </div>
+            </div>
+
+            <div className="mb-3 flex items-center gap-2 text-[11px] uppercase tracking-wide text-muted">
+              <span className="h-px flex-1 bg-border" />
+              ou cole o texto
+              <span className="h-px flex-1 bg-border" />
+            </div>
+
             <input
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
@@ -238,6 +328,12 @@ export default function Home() {
             >
               Indexar documento
             </button>
+
+            {addError && (
+              <p className="mt-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+                {addError}
+              </p>
+            )}
           </div>
         )}
 
@@ -247,31 +343,36 @@ export default function Home() {
           </p>
           {docs.length === 0 && (
             <p className="px-1 text-sm text-muted">
-              Nenhum documento ainda. Carregue o exemplo para testar.
+              Nenhum documento ainda. Importe uma URL ou carregue o exemplo para
+              testar.
             </p>
           )}
-          {docs.map((d) => (
-            <div
-              key={d.id}
-              className="group mb-1.5 rounded-lg border border-border bg-panel-2 p-2.5"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <span className="text-sm font-medium leading-snug">
-                  {d.title}
-                </span>
-                <button
-                  onClick={() => deleteDoc(d.id)}
-                  className="text-muted opacity-0 transition hover:text-red-400 group-hover:opacity-100"
-                  title="Remover"
-                >
-                  ✕
-                </button>
+          {docs.map((d) => {
+            const chars = d.content.length;
+            const chunks = chunkText(d.content, d.id, d.title).length;
+            return (
+              <div
+                key={d.id}
+                className="group mb-1.5 rounded-lg border border-border bg-panel-2 p-2.5"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <span className="text-sm font-medium leading-snug">
+                    {d.title}
+                  </span>
+                  <button
+                    onClick={() => deleteDoc(d.id)}
+                    className="text-muted opacity-0 transition hover:text-red-400 group-hover:opacity-100"
+                    title="Remover"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <p className="mt-1 font-mono text-[11px] text-muted">
+                  {chunks} chunks · {(chars / 1000).toFixed(1)}k chars
+                </p>
               </div>
-              <p className="mt-1 font-mono text-[11px] text-muted">
-                {d.chunks} chunks · {(d.chars / 1000).toFixed(1)}k chars
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </aside>
 
@@ -333,8 +434,8 @@ function Welcome({ onPick }: { onPick: (q: string) => void }) {
       </div>
       <h2 className="text-2xl font-semibold">Converse com seus documentos</h2>
       <p className="mx-auto mt-2 max-w-md text-sm text-muted">
-        Carregue o documento de exemplo na barra lateral e experimente uma das
-        perguntas abaixo.
+        Importe uma URL ou carregue o documento de exemplo na barra lateral e
+        experimente uma das perguntas abaixo.
       </p>
       <div className="mt-6 flex flex-col items-center gap-2">
         {examples.map((q) => (
