@@ -6,6 +6,8 @@ Retrieval runs **100% locally** (BM25, no embedding service, no vector database,
 
 > Built with Next.js 15 (App Router), React 19, TypeScript and Tailwind CSS v4.
 
+![DocChat AI — chat with your documents](docs/screenshot.png)
+
 ---
 
 ## ✨ Features
