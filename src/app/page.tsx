@@ -61,6 +61,7 @@ export default function Home() {
   const [newContent, setNewContent] = useState("");
   const [url, setUrl] = useState("");
   const [urlBusy, setUrlBusy] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
   const [addError, setAddError] = useState("");
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -121,6 +122,24 @@ export default function Home() {
       setAddError(e instanceof Error ? e.message : "Falha ao importar a URL.");
     } finally {
       setUrlBusy(false);
+    }
+  }
+
+  async function addFromPdf(file: File | null | undefined) {
+    if (!file || pdfBusy) return;
+    setPdfBusy(true);
+    setAddError("");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/pdf", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Falha ao ler o PDF.");
+      addDoc(data.title, data.content);
+    } catch (e) {
+      setAddError(e instanceof Error ? e.message : "Falha ao ler o PDF.");
+    } finally {
+      setPdfBusy(false);
     }
   }
 
@@ -300,6 +319,32 @@ export default function Home() {
                   {urlBusy ? "…" : "Importar"}
                 </button>
               </div>
+            </div>
+
+            {/* Upload a PDF */}
+            <div className="mb-3">
+              <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-muted">
+                Enviar um PDF
+              </label>
+              <label
+                className={`flex items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-panel-2 px-3 py-2 text-sm transition ${
+                  pdfBusy
+                    ? "cursor-default text-muted"
+                    : "cursor-pointer text-muted hover:border-accent hover:text-text"
+                }`}
+              >
+                {pdfBusy ? "Lendo PDF…" : "📄 Escolher arquivo PDF"}
+                <input
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  className="hidden"
+                  disabled={pdfBusy}
+                  onChange={(e) => {
+                    addFromPdf(e.target.files?.[0]);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
             </div>
 
             <div className="mb-3 flex items-center gap-2 text-[11px] uppercase tracking-wide text-muted">
