@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 430" width="880" height="430" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280"/>
+    </marker>
+  </defs>
+
+  <!-- Canvas background -->
+  <rect x="1" y="1" width="878" height="428" rx="14" fill="#ffffff" stroke="#d0d7de" stroke-width="1"/>
+
+  <!-- Browser box -->
+  <rect x="40" y="150" width="220" height="130" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="150" y="180" text-anchor="middle" font-size="16" font-weight="600" fill="#1f2937">Browser</text>
+  <text x="150" y="205" text-anchor="middle" font-size="12.5" fill="#1f2937">Next.js UI / React</text>
+  <text x="150" y="225" text-anchor="middle" font-size="12.5" fill="#1f2937">docs in localStorage</text>
+  <text x="150" y="252" text-anchor="middle" font-size="11.5" fill="#4b5563">renders cited passages live</text>
+
+  <!-- /api/chat box -->
+  <rect x="360" y="40" width="270" height="150" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+  <text x="495" y="68" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">/api/chat (stateless)</text>
+  <text x="495" y="95" text-anchor="middle" font-size="12.5" fill="#1f2937">1. chunk docs</text>
+  <text x="495" y="116" text-anchor="middle" font-size="12.5" fill="#1f2937">2. search passages</text>
+  <text x="495" y="137" text-anchor="middle" font-size="12.5" fill="#1f2937">3. stream cited passages</text>
+
+  <!-- BM25 index box -->
+  <rect x="700" y="65" width="150" height="100" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="775" y="105" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">BM25 Index</text>
+  <text x="775" y="128" text-anchor="middle" font-size="12.5" fill="#1f2937">lib/bm25</text>
+
+  <!-- /api/extract box -->
+  <rect x="360" y="280" width="270" height="110" rx="12" fill="#f3e8ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="495" y="312" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">/api/extract</text>
+  <text x="495" y="338" text-anchor="middle" font-size="12.5" fill="#1f2937">fetch + HTML&#8594;text</text>
+  <text x="495" y="360" text-anchor="middle" font-size="11.5" fill="#4b5563">returns readable text to index</text>
+
+  <!-- Browser -> /api/chat -->
+  <line x1="260" y1="190" x2="360" y2="130" stroke="#6b7280" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="300" y="148" text-anchor="middle" font-size="11.5" fill="#374151">question + docs</text>
+
+  <!-- /api/chat -> BM25 -->
+  <line x1="630" y1="115" x2="700" y2="115" stroke="#6b7280" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="665" y="105" text-anchor="middle" font-size="11" fill="#374151">top-k</text>
+
+  <!-- BM25 -> /api/chat (passages back) -->
+  <line x1="700" y1="140" x2="630" y2="140" stroke="#6b7280" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- /api/chat -> Browser (stream) -->
+  <line x1="360" y1="160" x2="260" y2="215" stroke="#6b7280" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="312" y="205" text-anchor="middle" font-size="11.5" fill="#374151">cited stream</text>
+
+  <!-- Browser -> /api/extract -->
+  <line x1="260" y1="245" x2="360" y2="320" stroke="#6b7280" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="300" y="300" text-anchor="middle" font-size="11.5" fill="#374151">paste URL</text>
+
+  <!-- /api/extract -> Browser (text) -->
+  <line x1="360" y1="350" x2="260" y2="265" stroke="#6b7280" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="310" y="350" text-anchor="middle" font-size="11.5" fill="#374151">readable text</text>
+</svg>

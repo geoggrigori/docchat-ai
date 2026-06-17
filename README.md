@@ -1,5 +1,7 @@
 # DocChat AI 🔎
 
+**English** · [Português](README.pt.md) · [Español](README.es.md)
+
 Chat with your documents. Paste text **or import any web page by URL**, ask questions in natural language, and get **the most relevant passages from your sources, with inline citations** — powered by a from-scratch RAG (Retrieval-Augmented Generation) pipeline.
 
 Retrieval runs **100% locally** (BM25, no embedding service, no vector database, no external API). The whole app is self-contained and needs no API keys to run.
@@ -23,25 +25,7 @@ Retrieval runs **100% locally** (BM25, no embedding service, no vector database,
 
 ## 🏗️ Architecture
 
-```
-          ┌──────────────┐  paste URL  ┌──────────────────────┐
- Browser  │  Next.js UI  │ ─────────▶  │ /api/extract         │
- (React)  │ (page.tsx)   │ ◀─────────  │  fetch + HTML→text    │
-          │  docs in     │   text       └──────────────────────┘
-          │  localStorage│
-          └──────┬───────┘
-                 │ question + docs
-                 ▼
-          ┌─────────────────────┐  build index + top-k  ┌──────────────┐
-          │ /api/chat (stateless)│ ───────────────────▶ │  BM25Index   │
-          │  1. chunk docs       │                       │ (lib/bm25)   │
-          │  2. search passages  │                       └──────────────┘
-          │  3. stream cited      │
-          │     passages          │
-          └──────────┬──────────┘
-                     ▼  text stream (citations header + passages)
-                 Browser renders the cited result live
-```
+![Architecture](docs/architecture.svg)
 
 **Key modules**
 
