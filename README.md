@@ -79,3 +79,7 @@ Deploys cleanly to [Vercel](https://vercel.com/) with **zero configuration** —
 ---
 
 Made as a portfolio project to demonstrate full-stack engineering and applied information retrieval. Chunking, BM25 ranking, URL ingestion, streaming, and UI are all hand-built.
+
+## License
+
+Released under the [MIT License](LICENSE).

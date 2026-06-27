@@ -79,3 +79,7 @@ Se despliega sin complicaciones en [Vercel](https://vercel.com/) con **cero conf
 ---
 
 Hecho como proyecto de portafolio para demostrar ingeniería full-stack y recuperación de información aplicada. Fragmentación, ranking BM25, ingesta de URL, streaming e interfaz están todos construidos a mano.
+
+## Licencia
+
+Distribuido bajo la [Licencia MIT](LICENSE).

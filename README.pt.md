@@ -79,3 +79,7 @@ Implanta sem complicações na [Vercel](https://vercel.com/) com **zero configur
 ---
 
 Feito como projeto de portfólio para demonstrar engenharia full-stack e recuperação de informação aplicada. Fragmentação, ranqueamento BM25, ingestão de URL, streaming e interface são todos construídos à mão.
+
+## Licença
+
+Distribuído sob a [Licença MIT](LICENSE).
