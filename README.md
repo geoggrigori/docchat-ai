@@ -1,85 +1,126 @@
-# DocChat AI 🔎
+<!-- ══════════════════════ IDIOMAS / LANGUAGES ══════════════════════ -->
+<div align="center">
+<a href="README.md"><img src="https://img.shields.io/badge/Português-1987F0?style=for-the-badge" alt="Português"/></a>
+<a href="README.en.md"><img src="https://img.shields.io/badge/English-555555?style=for-the-badge" alt="English"/></a>
+<a href="README.es.md"><img src="https://img.shields.io/badge/Español-555555?style=for-the-badge" alt="Español"/></a>
+</div>
 
-**English** · [Português](README.pt.md) · [Español](README.es.md)
+<!-- ══════════════════════════ BANNER ══════════════════════════ -->
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1987F0,100:6C3CE9&height=200&section=header&text=DocChat%20AI&fontSize=48&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Converse%20com%20seus%20documentos%20via%20RAG%20100%25%20local&descAlignY=55&descSize=17" width="100%" alt="DocChat AI banner"/>
+</div>
 
-Chat with your documents. Paste text **or import any web page by URL**, ask questions in natural language, and get **the most relevant passages from your sources, with inline citations** — powered by a from-scratch RAG (Retrieval-Augmented Generation) pipeline.
+<br/>
 
-Retrieval runs **100% locally** (BM25, no embedding service, no vector database, no external API). The whole app is self-contained and needs no API keys to run.
+<h1 align="center">DocChat AI</h1>
+<p align="center"><em>Converse com seus documentos: cole um texto ou importe uma página por URL, pergunte em linguagem natural e receba respostas citadas</em></p>
+<p align="center"><strong>Documento → chunking → índice BM25 local → resposta com citação, em streaming</strong></p>
 
-> Built with Next.js 15 (App Router), React 19, TypeScript and Tailwind CSS v4.
+<div align="center">
 
-![DocChat AI — chat with your documents](docs/screenshot.png)
+<img src="https://img.shields.io/badge/RAG-100%25_Local-2E7D32?style=for-the-badge" alt="rag local"/>
+<img src="https://img.shields.io/badge/Zero_API_Keys-1987F0?style=for-the-badge" alt="zero api keys"/>
+<br/>
+<img src="https://img.shields.io/badge/Next.js_15-000000?style=flat-square&logo=nextdotjs&logoColor=white" alt="nextjs"/>
+<img src="https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black" alt="react"/>
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="typescript"/>
+<img src="https://img.shields.io/badge/Tailwind_CSS_v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="tailwind"/>
+<img src="https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white" alt="vercel"/>
 
----
+</div>
 
-## ✨ Features
+<!-- ══════════════════════════ NAVEGAÇÃO ══════════════════════════ -->
+<div align="center">
 
-- **From-scratch BM25 search** — the classic IR ranking function (term frequency × inverse document frequency with length normalization), implemented with zero dependencies. Bilingual (PT/EN) tokenizer with accent folding and stopword removal.
-- **Retrieval-Augmented Generation** — documents are chunked, indexed, and the most relevant passages are retrieved per question and returned as grounded, cited context.
-- **Cited results** — every passage references the document it came from, shown as source chips you can hover to preview.
-- **Import by URL** — paste a link and the server fetches the page, strips it to readable text, and indexes it (no CORS headaches, done server-side).
-- **Streaming responses** — results render live, using a `ReadableStream` over the Node boundary.
-- **Stateless & serverless-ready** — documents live in the browser (`localStorage`) and are sent with each question, so the API holds no state and runs reliably on serverless platforms with no database to provision.
-- **No external services** — no API keys, no third-party AI provider, no vector DB. It just works offline.
-- **Polished dark UI** — responsive, accessible, keyboard-friendly (Enter to send, Shift+Enter for newline).
+<a href="#sobre"><img src="https://img.shields.io/badge/▸_SOBRE-1987F0?style=for-the-badge" alt="sobre"/></a>
+<a href="#destaques"><img src="https://img.shields.io/badge/▸_DESTAQUES-000000?style=for-the-badge" alt="destaques"/></a>
+<a href="#arquitetura"><img src="https://img.shields.io/badge/▸_ARQUITETURA-1987F0?style=for-the-badge" alt="arquitetura"/></a>
+<a href="#tecnologias"><img src="https://img.shields.io/badge/▸_TECNOLOGIAS-000000?style=for-the-badge" alt="tech"/></a>
+<a href="#uso"><img src="https://img.shields.io/badge/▸_USO-1987F0?style=for-the-badge" alt="uso"/></a>
 
-## 🏗️ Architecture
+</div>
 
-![Architecture](docs/architecture.svg)
+<br/>
 
-**Key modules**
+> 💡 **Sem API keys, sem banco vetorial, sem serviço externo.** A busca roda 100% localmente com BM25 escrito do zero — `npm install && npm run dev` e já funciona.
 
-| File | Responsibility |
-|------|----------------|
-| `src/lib/chunk.ts`        | Split documents into overlapping, boundary-aware chunks |
-| `src/lib/bm25.ts`         | Dependency-free BM25 ranking index + tokenizer |
-| `src/lib/answer.ts`       | Compose a cited result from the retrieved passages (local, streamed) |
-| `src/app/api/extract`     | Fetch a URL server-side and return readable text |
-| `src/app/api/chat`        | Stateless retrieval + streamed, cited result |
-| `src/app/page.tsx`        | Chat UI, document sidebar (localStorage), streaming client |
+![DocChat AI — chat com seus documentos](docs/screenshot.png)
 
-## 🚀 Getting started
+<!-- ══════════════════════════ SOBRE ══════════════════════════ -->
+## Sobre
+
+**DocChat AI** é um app full-stack de **RAG (Retrieval-Augmented Generation)** construído do zero: você cola um texto ou importa qualquer página por URL, faz uma pergunta em linguagem natural e recebe **as passagens mais relevantes das suas fontes, com citação inline** — sem depender de nenhum provedor de IA, embedding ou banco vetorial externo.
+
+Foi feito como projeto de portfólio para demonstrar engenharia full-stack e recuperação de informação aplicada: chunking, ranking BM25, ingestão por URL, streaming e UI são todos feitos à mão.
+
+<!-- ══════════════════════════ DESTAQUES ══════════════════════════ -->
+## Destaques
+
+| Recurso | O que faz |
+|---|---|
+| **BM25 do zero** | Ranking clássico de IR (TF-IDF com normalização por tamanho), zero dependências. Tokenizador bilíngue (PT/EN) com remoção de acentos e stopwords |
+| **RAG com citação** | Documentos são fatiados (chunking), indexados e as passagens mais relevantes voltam como contexto citado |
+| **Importação por URL** | Cola um link e o servidor busca a página, extrai o texto legível e indexa — sem dor de cabeça de CORS |
+| **Streaming** | Respostas renderizam ao vivo via `ReadableStream` |
+| **Stateless / serverless-ready** | Documentos vivem no `localStorage` do navegador e são enviados a cada pergunta — API sem estado, sem banco para provisionar |
+| **Zero serviços externos** | Sem chave de API, sem provedor de IA terceirizado, sem vector DB — funciona offline |
+
+<!-- ══════════════════════════ ARQUITETURA ══════════════════════════ -->
+## Arquitetura
+
+```mermaid
+flowchart TD
+    A[Usuário cola texto / importa URL] --> B["/api/extract — busca a URL e extrai texto legível"]
+    B --> C[Documento salvo no localStorage do navegador]
+    C --> D[Pergunta do usuário]
+    D --> E["/api/chat — chunking + índice BM25 (stateless)"]
+    E --> F[Passagens mais relevantes selecionadas]
+    F --> G[Resposta citada, enviada em streaming via ReadableStream]
+```
+
+| Arquivo | Responsabilidade |
+|---|---|
+| `src/lib/chunk.ts` | Divide documentos em chunks sobrepostos, respeitando limites |
+| `src/lib/bm25.ts` | Índice BM25 sem dependências + tokenizador |
+| `src/lib/answer.ts` | Compõe a resposta citada a partir das passagens recuperadas |
+| `src/app/api/extract` | Busca uma URL no servidor e devolve texto legível |
+| `src/app/api/chat` | Recuperação stateless + resposta citada em streaming |
+| `src/app/page.tsx` | UI de chat, sidebar de documentos (localStorage), streaming no cliente |
+
+<!-- ══════════════════════════ TECNOLOGIAS ══════════════════════════ -->
+## Tecnologias
+
+| Camada | Tecnologia |
+|---|---|
+| Framework | Next.js 15 (App Router, Route Handlers, streaming) |
+| Linguagem | TypeScript (strict) |
+| UI | React 19, Tailwind CSS v4 |
+| Recuperação | BM25 próprio — sem vector DB, sem provedor de IA |
+| Deploy | Vercel, zero configuração |
+
+<!-- ══════════════════════════ USO ══════════════════════════ -->
+## Uso
 
 ```bash
-# 1. Install dependencies
 npm install
-
-# 2. Run the dev server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000), click **Exemplo** in the sidebar (or import a URL), and ask a question. No configuration or API key needed.
+Abra [http://localhost:3000](http://localhost:3000), clique em **Exemplo** na sidebar (ou importe uma URL) e faça uma pergunta. Sem configuração, sem API key.
 
-## 🧪 Tests
-
+**Testes:**
 ```bash
 npm test
 ```
+Cobrem o núcleo de recuperação — limites de chunking e ranking BM25.
 
-Unit tests cover the retrieval core — chunking boundaries and BM25 ranking — the parts where correctness actually matters.
+<!-- ══════════════════════════ LICENÇA ══════════════════════════ -->
+## Licença
 
-## 🛠️ Tech stack
+[MIT](LICENSE).
 
-- **Framework:** Next.js 15 (App Router, Route Handlers, streaming)
-- **Language:** TypeScript (strict)
-- **UI:** React 19, Tailwind CSS v4
-- **Retrieval:** custom BM25 — no external vector DB, no AI provider
+<div align="center">
+  <img src="https://file.loading.io/color/feature/thumb/Blues-8.png?" width="100%" height="10px" alt="divider"/>
+</div>
 
-## 📦 Deploy
-
-Deploys cleanly to [Vercel](https://vercel.com/) with **zero configuration** — the API is stateless (documents live in the browser), so there's no database to provision and no environment variables to set.
-
-## 📝 Notes & possible extensions
-
-- Add an optional answer-synthesis layer on top of retrieval (any LLM provider) behind a feature flag.
-- Swap BM25 for vector embeddings + a hybrid reranker.
-- Add PDF/DOCX parsing on upload.
-- Per-user document spaces with auth + a shared datastore.
-
----
-
-Made as a portfolio project to demonstrate full-stack engineering and applied information retrieval. Chunking, BM25 ranking, URL ingestion, streaming, and UI are all hand-built.
-
-## License
-
-Released under the [MIT License](LICENSE).
+<p align="center"><sub>Desenvolvido por <strong><a href="https://github.com/geoggrigori">Grigori</a></strong> · Projeto de portfólio · 2026</sub></p>
