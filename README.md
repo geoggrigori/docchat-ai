@@ -5,9 +5,9 @@
 <a href="README.es.md"><img src="https://img.shields.io/badge/Español-555555?style=for-the-badge" alt="Español"/></a>
 </div>
 
-<!-- ══════════════════════════ BANNER ══════════════════════════ -->
+<!-- ══════════════════════════ CAPA ══════════════════════════ -->
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1987F0,100:6C3CE9&height=200&section=header&text=DocChat%20AI&fontSize=48&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Converse%20com%20seus%20documentos%20via%20RAG%20100%25%20local&descAlignY=55&descSize=17" width="100%" alt="DocChat AI banner"/>
+  <img src="docs/screenshot.png" width="100%" alt="DocChat AI — chat com seus documentos"/>
 </div>
 
 <br/>
@@ -44,14 +44,12 @@
 
 > 💡 **Sem API keys, sem banco vetorial, sem serviço externo.** A busca roda 100% localmente com BM25 escrito do zero — `npm install && npm run dev` e já funciona.
 
-![DocChat AI — chat com seus documentos](docs/screenshot.png)
-
 <!-- ══════════════════════════ SOBRE ══════════════════════════ -->
 ## Sobre
 
 **DocChat AI** é um app full-stack de **RAG (Retrieval-Augmented Generation)** construído do zero: você cola um texto ou importa qualquer página por URL, faz uma pergunta em linguagem natural e recebe **as passagens mais relevantes das suas fontes, com citação inline** — sem depender de nenhum provedor de IA, embedding ou banco vetorial externo.
 
-Foi feito como projeto de portfólio para demonstrar engenharia full-stack e recuperação de informação aplicada: chunking, ranking BM25, ingestão por URL, streaming e UI são todos feitos à mão.
+Chunking, ranking BM25, ingestão por URL, streaming e UI: tudo feito à mão, sem frameworks de IA por trás.
 
 <!-- ══════════════════════════ DESTAQUES ══════════════════════════ -->
 ## Destaques
@@ -123,4 +121,4 @@ Cobrem o núcleo de recuperação — limites de chunking e ranking BM25.
   <img src="https://file.loading.io/color/feature/thumb/Blues-8.png?" width="100%" height="10px" alt="divider"/>
 </div>
 
-<p align="center"><sub>Desenvolvido por <strong><a href="https://github.com/geoggrigori">Grigori</a></strong> · Projeto de portfólio · 2026</sub></p>
+<p align="center"><sub>Desenvolvido por <strong><a href="https://github.com/geoggrigori">Grigori</a></strong> · 2026</sub></p>
