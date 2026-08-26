@@ -5,9 +5,9 @@
 <a href="README.es.md"><img src="https://img.shields.io/badge/Español-555555?style=for-the-badge" alt="Español"/></a>
 </div>
 
-<!-- ══════════════════════════ BANNER ══════════════════════════ -->
+<!-- ══════════════════════════ COVER ══════════════════════════ -->
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1987F0,100:6C3CE9&height=200&section=header&text=DocChat%20AI&fontSize=48&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Chat%20with%20your%20documents%20via%20100%25%20local%20RAG&descAlignY=55&descSize=17" width="100%" alt="DocChat AI banner"/>
+  <img src="docs/screenshot.png" width="100%" alt="DocChat AI — chat with your documents"/>
 </div>
 
 <br/>
@@ -44,14 +44,12 @@
 
 > 💡 **No API keys, no vector database, no external service.** Retrieval runs 100% locally with a from-scratch BM25 implementation — `npm install && npm run dev` and it just works.
 
-![DocChat AI — chat with your documents](docs/screenshot.png)
-
 <!-- ══════════════════════════ ABOUT ══════════════════════════ -->
 ## About
 
 **DocChat AI** is a full-stack **RAG (Retrieval-Augmented Generation)** app built from scratch: paste text or import any web page by URL, ask a question in natural language, and get **the most relevant passages from your sources, with inline citations** — no third-party AI provider, embedding service, or vector database involved.
 
-Built as a portfolio project to demonstrate full-stack engineering and applied information retrieval: chunking, BM25 ranking, URL ingestion, streaming and UI are all hand-built.
+Chunking, BM25 ranking, URL ingestion, streaming and UI: all hand-built, no AI framework underneath.
 
 <!-- ══════════════════════════ HIGHLIGHTS ══════════════════════════ -->
 ## Highlights
@@ -123,4 +121,4 @@ Covers the retrieval core — chunking boundaries and BM25 ranking.
   <img src="https://file.loading.io/color/feature/thumb/Blues-8.png?" width="100%" height="10px" alt="divider"/>
 </div>
 
-<p align="center"><sub>Built by <strong><a href="https://github.com/geoggrigori">Grigori</a></strong> · Portfolio project · 2026</sub></p>
+<p align="center"><sub>Built by <strong><a href="https://github.com/geoggrigori">Grigori</a></strong> · 2026</sub></p>
