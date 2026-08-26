@@ -1,3 +1,8 @@
+<!-- ══════════════════════════ TITLE ══════════════════════════ -->
+<div align="center">
+  <img src="docs/title-banner.svg" width="100%" alt="DocChat AI"/>
+</div>
+
 <!-- ══════════════════════ IDIOMAS / LANGUAGES ══════════════════════ -->
 <div align="center">
 <a href="README.md"><img src="https://img.shields.io/badge/Português-555555?style=for-the-badge" alt="Português"/></a>
