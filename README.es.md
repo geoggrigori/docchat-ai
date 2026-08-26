@@ -5,9 +5,9 @@
 <a href="README.es.md"><img src="https://img.shields.io/badge/Español-1987F0?style=for-the-badge" alt="Español"/></a>
 </div>
 
-<!-- ══════════════════════════ BANNER ══════════════════════════ -->
+<!-- ══════════════════════════ PORTADA ══════════════════════════ -->
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1987F0,100:6C3CE9&height=200&section=header&text=DocChat%20AI&fontSize=48&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Chatea%20con%20tus%20documentos%20via%20RAG%20100%25%20local&descAlignY=55&descSize=17" width="100%" alt="DocChat AI banner"/>
+  <img src="docs/screenshot.png" width="100%" alt="DocChat AI — chatea con tus documentos"/>
 </div>
 
 <br/>
@@ -44,14 +44,12 @@
 
 > 💡 **Sin API keys, sin base de datos vectorial, sin servicio externo.** La búsqueda corre 100% local con BM25 escrito desde cero — `npm install && npm run dev` y ya funciona.
 
-![DocChat AI — chatea con tus documentos](docs/screenshot.png)
-
 <!-- ══════════════════════════ ACERCA DE ══════════════════════════ -->
 ## Acerca de
 
 **DocChat AI** es una app full-stack de **RAG (Retrieval-Augmented Generation)** construida desde cero: pega un texto o importa cualquier página por URL, haz una pregunta en lenguaje natural y recibe **los pasajes más relevantes de tus fuentes, con citas en línea** — sin depender de ningún proveedor de IA, servicio de embeddings o base de datos vectorial.
 
-Hecho como proyecto de portafolio para demostrar ingeniería full-stack y recuperación de información aplicada: fragmentación, ranking BM25, ingesta por URL, streaming y UI están todos hechos a mano.
+Fragmentación, ranking BM25, ingesta por URL, streaming y UI: todo hecho a mano, sin ningún framework de IA por detrás.
 
 <!-- ══════════════════════════ DESTACADOS ══════════════════════════ -->
 ## Destacados
@@ -123,4 +121,4 @@ Cubren el núcleo de recuperación — límites de fragmentación y ranking BM25
   <img src="https://file.loading.io/color/feature/thumb/Blues-8.png?" width="100%" height="10px" alt="divider"/>
 </div>
 
-<p align="center"><sub>Desarrollado por <strong><a href="https://github.com/geoggrigori">Grigori</a></strong> · Proyecto de portafolio · 2026</sub></p>
+<p align="center"><sub>Desarrollado por <strong><a href="https://github.com/geoggrigori">Grigori</a></strong> · 2026</sub></p>
