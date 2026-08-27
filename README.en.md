@@ -21,10 +21,6 @@
 
 <br/>
 
-<h1 align="center">DocChat AI</h1>
-<p align="center"><em>Paste a document or import any web page by URL, ask questions in natural language, get cited answers</em></p>
-<p align="center"><strong>Document → chunking → local BM25 index → cited streaming answer</strong></p>
-
 <div align="center">
 
 <img src="https://img.shields.io/badge/RAG-100%25_Local-2E7D32?style=for-the-badge" alt="rag local"/>
