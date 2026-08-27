@@ -21,10 +21,6 @@
 
 <br/>
 
-<h1 align="center">DocChat AI</h1>
-<p align="center"><em>Converse com seus documentos: cole um texto ou importe uma página por URL, pergunte em linguagem natural e receba respostas citadas</em></p>
-<p align="center"><strong>Documento → chunking → índice BM25 local → resposta com citação, em streaming</strong></p>
-
 <div align="center">
 
 <img src="https://img.shields.io/badge/RAG-100%25_Local-2E7D32?style=for-the-badge" alt="rag local"/>
